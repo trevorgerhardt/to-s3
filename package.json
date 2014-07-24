@@ -1,0 +1,28 @@
+{
+  "name": "toS3",
+  "version": "0.0.0",
+  "description": "Simple push folder to S3 bucket",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "github.com/trevorgerhardt/toS3.git"
+  },
+  "keywords": [
+    "AWS",
+    "S3"
+  ],
+  "author": "Trevor Gerhardt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trevorgerhardt/toS3/issues"
+  },
+  "homepage": "https://github.com/trevorgerhardt/toS3",
+  "dependencies": {
+    "aws-sdk": "^2.0.8",
+    "batch": "^0.5.1",
+    "mime": "^1.2.11"
+  },
+  "bin": {
+    "toS3": "index.js"
+  }
+}
