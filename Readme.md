@@ -1,12 +1,12 @@
 
-# toS3
+# to-s3
 
 Push a folder to S3.
 
 ## Installation
 
 ```bash
-$ npm install toS3 -g
+$ npm install to-s3 -g
 ```
 
 ## Requirements
@@ -16,7 +16,7 @@ Your AWS credentials must be accessible via the environment variables `AWS_ACCES
 ## Usage
 
 ```bash
-$ toS3 /directory bucketname
+$ to-s3 /directory bucketname
 ```
 
 Directory gets passed to `path.resolve`. Bucketname must be valid.
