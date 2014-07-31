@@ -1,6 +1,6 @@
 {
   "name": "to-s3",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Simple command line push to S3 bucket",
   "main": "bin/to-s3",
   "repository": {
@@ -24,6 +24,6 @@
     "mime": "^1.2.11"
   },
   "bin": {
-    "toS3": "bin/to-s3"
+    "to-s3": "bin/to-s3"
   }
 }
