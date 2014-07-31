@@ -1,7 +1,7 @@
 
 # to-s3
 
-Push a folder to S3.
+Push files to S3.
 
 ## Installation
 
@@ -11,16 +11,12 @@ $ npm install to-s3 -g
 
 ## Requirements
 
-Your AWS credentials must be accessible via the environment variables `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY`.
+Your AWS credentials must be accessible via AWS Node.js client. See the [AWS SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html) docs for details.
 
 ## Usage
 
 ```bash
-$ to-s3 /directory bucketname
+$ to-s3 <files or folders> <bucketname> [options]
 ```
 
-Directory gets passed to `path.resolve`. Bucketname must be valid.
-
-That is all.
-
-<3
+:cocktail:

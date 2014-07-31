@@ -1,8 +1,8 @@
 {
   "name": "to-s3",
-  "version": "0.0.0",
-  "description": "Simple push folder to S3 bucket",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "Simple command line push to S3 bucket",
+  "main": "bin/to-s3",
   "repository": {
     "type": "git",
     "url": "github.com/trevorgerhardt/to-s3.git"
@@ -18,11 +18,12 @@
   },
   "homepage": "https://github.com/trevorgerhardt/to-s3",
   "dependencies": {
-    "aws-sdk": "^2.0.8",
+    "aws-sdk": "^2.0.10",
     "batch": "^0.5.1",
+    "commander": "^2.3.0",
     "mime": "^1.2.11"
   },
   "bin": {
-    "toS3": "index.js"
+    "toS3": "bin/to-s3"
   }
 }
