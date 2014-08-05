@@ -19,6 +19,7 @@ commander
   .option('-a, --acl <acl>', 'The canned ACL to apply to the object. Possible values include: private | public-read | public-read-write | authenticated-read | bucket-owner-read | bucket-owner-full-control', 'private')
   .option('-i, --ignore <ignore>', 'Ignore files and folders that match the given string(s)', '^.')
   .option('-q, --quiet', 'Quiet logs.')
+  .option('-v, --verbose', 'Show notices')
   .parse(process.argv);
 
 /**
@@ -34,7 +35,6 @@ if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
  * Required data
  */
 
-var acl = commander.acl;
 var bucket = commander.args.slice(-1)[0];
 var cwd = process.cwd();
 var files = commander.args.slice(0, -1);
@@ -71,7 +71,10 @@ function pushFiles(files, done) {
 
   files.forEach(function(file) {
     batch.push(function(done) {
-      if (ignoreFile(file)) return done();
+      if (ignoreFile(file)) {
+        notice('ignoring ' + file);
+        return done();
+      }
 
       file = resolve(file);
       fs.stat(file, function(err, stats) {
@@ -105,7 +108,7 @@ function pushFile(file, stats, done) {
     ? prefix + '/' + filename
     : filename;
 
-  start('uploading' + filename + ' to ' + bucket + '/' + key)
+  start('uploading ' + filename + ' to ' + bucket + '/' + key)
   isFileUpToDate(stats, key, function(err, upToDate) {
     if (upToDate) {
       end(bucket + '/' + key + ' contains the latest version of ' + filename);
@@ -113,7 +116,7 @@ function pushFile(file, stats, done) {
     } else {
       var stream = fs.createReadStream(file);
       s3.putObject({
-        ACL: acl,
+        ACL: commander.acl,
         Body: stream,
         Bucket: bucket,
         ContentType: mime.lookup(file),
@@ -161,3 +164,4 @@ function ignoreFile(f) {
 function start(msg) { quiet || console.log('--> ' + msg); }
 function end(msg) { quiet || console.log('<-- ' + msg); }
 function error(msg) { console.error('*** ' + msg); }
+function notice(msg) { commander.verbose && console.log('--- ' + msg); }
