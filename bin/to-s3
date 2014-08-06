@@ -38,7 +38,7 @@ if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
 var bucket = commander.args.slice(-1)[0];
 var cwd = process.cwd();
 var files = commander.args.slice(0, -1);
-var ignores = commander.ignore.split(',').map(function(i) { return new RegExp(i); });
+var ignores = commander.ignore.split(',').map(function(i) { return new RegExp('^' + i); });
 var prefix = commander.prefix;
 var quiet = commander.quiet;
 var s3 = new AWS.S3({
