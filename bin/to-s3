@@ -17,7 +17,7 @@ commander
   .usage('<files...> <bucket> [options]')
   .option('-p, --prefix <prefix>', 'Prefix files with path in bucket', '')
   .option('-a, --acl <acl>', 'The canned ACL to apply to the object. Possible values include: private | public-read | public-read-write | authenticated-read | bucket-owner-read | bucket-owner-full-control', 'private')
-  .option('-i, --ignore <ignore>', 'Ignore files and folders that match the given string(s)', '^.')
+  .option('-i, --ignore <ignore>', 'Ignore files and folders that match the given string(s)', '^\\.')
   .option('-q, --quiet', 'Quiet logs.')
   .option('-v, --verbose', 'Show notices')
   .parse(process.argv);
