@@ -1,4 +1,8 @@
 
+## 0.1.2 — 2014-10-06
+
+* Fix ignore regex
+
 ## 0.1.1 — 2014-08-05
 
 * Added `--verbose` flag
