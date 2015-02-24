@@ -15,6 +15,7 @@ commander
   .version(require('../package.json').version)
   .description('Push a list of files and folders to a given bucket. Uses the path from the current directory as the prefix for each file or the folder unless a prefix is given')
   .usage('<files...> <bucket> [options]')
+  .option('-r, --region <region>', 'Specify the bucket region', '')
   .option('-p, --prefix <prefix>', 'Prefix files with path in bucket', '')
   .option('-a, --acl <acl>', 'The canned ACL to apply to the object. Possible values include: private | public-read | public-read-write | authenticated-read | bucket-owner-read | bucket-owner-full-control', 'private')
   .option('-i, --ignore <ignore>', 'Ignore files and folders that match the given string(s)', '^\\.')
@@ -42,6 +43,7 @@ var ignores = commander.ignore.split(',').map(function(i) { return new RegExp('^
 var prefix = commander.prefix;
 var quiet = commander.quiet;
 var s3 = new AWS.S3({
+  region: commander.region,
   params: {
     Bucket: bucket
   }
