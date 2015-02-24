@@ -1,4 +1,9 @@
 
+## 0.1.3 — 2015-02-24
+
+* Add `--region` flag
+* Update dependencies
+
 ## 0.1.2 — 2014-10-06
 
 * Fix ignore regex
