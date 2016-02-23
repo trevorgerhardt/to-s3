@@ -24,12 +24,13 @@ commander
   .parse(process.argv);
 
 /**
- * Check for AWS credentials
+ * Check for AWS credentials - warn if they don't exist
  */
 
 if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-  error('Set AWS Access Key ID & AWS Secret Access Key as environment variables. See: http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html');
-  process.exit(1);
+  console.log('WARNING: No AWS Access Key ID & AWS Secret Access Key environment variables.');
+  console.log('         Relying on AWS credential file (e.g. on *nix systems: ~/.aws/credentials');
+  console.log('         See: http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html');
 }
 
 /**
