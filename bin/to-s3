@@ -24,15 +24,6 @@ commander
   .parse(process.argv);
 
 /**
- * Check for AWS credentials
- */
-
-if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-  error('Set AWS Access Key ID & AWS Secret Access Key as environment variables. See: http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html');
-  process.exit(1);
-}
-
-/**
  * Required data
  */
 
