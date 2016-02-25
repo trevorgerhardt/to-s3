@@ -5,7 +5,7 @@ var Batch = require('batch')
 var commander = require('commander')
 var fs = require('fs')
 var mime = require('mime')
-var resolve = require('path').resolve
+var path = require('path')
 
 /**
  * Set up program
@@ -30,7 +30,7 @@ commander
 var bucket = commander.args.slice(-1)[0]
 var cwd = process.cwd()
 var files = commander.args.slice(0, -1)
-var ignores = commander.ignore.split(',').map(function (i) { return new RegExp('^' + i) })
+var ignores = commander.ignore.split(',').map(function (i) { return new RegExp(i) })
 var prefix = commander.prefix
 var quiet = commander.quiet
 var s3 = new AWS.S3({
@@ -47,10 +47,10 @@ var s3 = new AWS.S3({
 start('uploading ' + files.join(', ') + ' to ' + bucket)
 pushFiles(files, function (err, results) {
   if (err) {
-    console.error(err)
+    error(err)
     process.exit(1)
   } else {
-    end('pushed files successfully to ' + bucket)
+    end('pushed ' + results.filter(function (r) { return !!r }).length + ' files successfully to ' + bucket)
     process.exit()
   }
 })
@@ -69,7 +69,7 @@ function pushFiles (files, done) {
         return done()
       }
 
-      file = resolve(file)
+      file = path.resolve(file)
       fs.stat(file, function (err, stats) {
         if (err) {
           done(err)
@@ -103,7 +103,7 @@ function pushFile (file, stats, done) {
 
   start('uploading ' + filename + ' to ' + bucket + '/' + key)
   isFileUpToDate(stats, key, function (err, upToDate) {
-    if (err) notice(err)
+    if (err) notice('Error checking if file is up to date: ' + err)
     if (upToDate) {
       end(bucket + '/' + key + ' contains the latest version of ' + filename)
       done()
@@ -150,6 +150,15 @@ function isFileUpToDate (stats, key, done) {
  */
 
 function ignoreFile (f) {
+  if (path.dirname(f).match(/^\.\./)) {
+    error('to-s3 makes assumptions about directory structure and therefore does not allow files or folders from outside the current working directory')
+    return true
+  }
+
+  if (path.dirname(f).match(/^\./)) {
+    f = f.slice(1)
+  }
+
   return ignores.reduce(function (m, i) {
     return m || f.match(i)
   }, false)
@@ -157,5 +166,5 @@ function ignoreFile (f) {
 
 function start (msg) { quiet || console.log('--> ' + msg) }
 function end (msg) { quiet || console.log('<-- ' + msg) }
-function error (msg) { console.error('*** ' + msg) }
+function error (msg) { console.error('*** ' + msg + ' ***') }
 function notice (msg) { commander.verbose && console.log('--- ' + msg) }
