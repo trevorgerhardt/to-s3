@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-var AWS = require('aws-sdk');
-var Batch = require('batch');
-var commander = require('commander');
-var fs = require('fs');
-var mime = require('mime');
-var resolve = require('path').resolve;
+var AWS = require('aws-sdk')
+var Batch = require('batch')
+var commander = require('commander')
+var fs = require('fs')
+var mime = require('mime')
+var resolve = require('path').resolve
 
 /**
  * Set up program
@@ -21,108 +21,109 @@ commander
   .option('-i, --ignore <ignore>', 'Ignore files and folders that match the given string(s)', '^\\.')
   .option('-q, --quiet', 'Quiet logs.')
   .option('-v, --verbose', 'Show notices')
-  .parse(process.argv);
+  .parse(process.argv)
 
 /**
  * Required data
  */
 
-var bucket = commander.args.slice(-1)[0];
-var cwd = process.cwd();
-var files = commander.args.slice(0, -1);
-var ignores = commander.ignore.split(',').map(function(i) { return new RegExp('^' + i); });
-var prefix = commander.prefix;
-var quiet = commander.quiet;
+var bucket = commander.args.slice(-1)[0]
+var cwd = process.cwd()
+var files = commander.args.slice(0, -1)
+var ignores = commander.ignore.split(',').map(function (i) { return new RegExp('^' + i) })
+var prefix = commander.prefix
+var quiet = commander.quiet
 var s3 = new AWS.S3({
   region: commander.region,
   params: {
     Bucket: bucket
   }
-});
+})
 
 /**
  * Upload!!
  */
 
-start('uploading ' + files.join(', ') + ' to ' + bucket);
-pushFiles(files, function(err, results) {
+start('uploading ' + files.join(', ') + ' to ' + bucket)
+pushFiles(files, function (err, results) {
   if (err) {
-    console.error(err);
-    process.exit(1);
+    console.error(err)
+    process.exit(1)
   } else {
-    end('pushed files successfully to ' + bucket);
-    process.exit();
+    end('pushed files successfully to ' + bucket)
+    process.exit()
   }
-});
+})
 
 /**
  * Push all files and directories to S3
  */
 
-function pushFiles(files, done) {
-  var batch = new Batch;
+function pushFiles (files, done) {
+  var batch = new Batch()
 
-  files.forEach(function(file) {
-    batch.push(function(done) {
+  files.forEach(function (file) {
+    batch.push(function (done) {
       if (ignoreFile(file)) {
-        notice('ignoring ' + file);
-        return done();
+        notice('ignoring ' + file)
+        return done()
       }
 
-      file = resolve(file);
-      fs.stat(file, function(err, stats) {
+      file = resolve(file)
+      fs.stat(file, function (err, stats) {
         if (err) {
-          done(err);
+          done(err)
         } else if (stats.isDirectory()) {
-          fs.readdir(file, function(err, files) {
+          fs.readdir(file, function (err, files) {
             if (err) {
-              done(err);
+              done(err)
             } else {
-              pushFiles(files.map(function(f) { return file + '/' + f; }), done);
+              pushFiles(files.map(function (f) { return file + '/' + f }), done)
             }
-          });
+          })
         } else {
-          pushFile(file, stats, done);
+          pushFile(file, stats, done)
         }
-      });
-    });
-  });
+      })
+    })
+  })
 
-  batch.end(done);
+  batch.end(done)
 }
 
 /**
  * Stream push a file to S3
  */
 
-function pushFile(file, stats, done) {
-  var filename = file.substring(cwd.length + 1); // remove the leading slash
+function pushFile (file, stats, done) {
+  var filename = file.substring(cwd.length + 1) // remove the leading slash
   var key = prefix
     ? prefix + '/' + filename
-    : filename;
+    : filename
 
   start('uploading ' + filename + ' to ' + bucket + '/' + key)
-  isFileUpToDate(stats, key, function(err, upToDate) {
+  isFileUpToDate(stats, key, function (err, upToDate) {
+    if (err) notice(err)
     if (upToDate) {
-      end(bucket + '/' + key + ' contains the latest version of ' + filename);
-      done();
+      end(bucket + '/' + key + ' contains the latest version of ' + filename)
+      done()
     } else {
-      var stream = fs.createReadStream(file);
+      var stream = fs.createReadStream(file)
       s3.putObject({
         ACL: commander.acl,
         Body: stream,
         Bucket: bucket,
         ContentType: mime.lookup(file),
         Key: key
-      }, function(err, res) {
+      }, function (err, res) {
         if (err) {
-          error('failed to upload ' + filename + ' to ' + bucket + '/' + key);
-          done(err);
+          error('failed to upload ' + filename + ' to ' + bucket + '/' + key)
+          done(err)
         } else {
-          end(filename + ' has been uploaded to ' + bucket + '/' + key);
-          done(null, res);
+          end(filename + ' has been uploaded to ' + bucket + '/' + key)
+          done(null, res)
         }
-      });
+      })
     }
   })
 }
@@ -131,30 +132,30 @@ function pushFile(file, stats, done) {
  * Last Modified
  */
 
-function isFileUpToDate(stats, key, done) {
+function isFileUpToDate (stats, key, done) {
   s3.headObject({
     Bucket: bucket,
     Key: key
-  }, function(err, data) {
+  }, function (err, data) {
     var lastModified = data && data.LastModified
       ? Date.parse(data.LastModified)
-      : -Infinity;
+      : -Infinity
 
-    done(err, stats.mtime.valueOf() <= lastModified);
-  });
+    done(err, stats.mtime.valueOf() <= lastModified)
+  })
 }
 
 /**
  * Ignore files that match the strings passed in
  */
 
-function ignoreFile(f) {
-  return ignores.reduce(function(m, i) {
-    return m || f.match(i);
-  }, false);
+function ignoreFile (f) {
+  return ignores.reduce(function (m, i) {
+    return m || f.match(i)
+  }, false)
 }
 
-function start(msg) { quiet || console.log('--> ' + msg); }
-function end(msg) { quiet || console.log('<-- ' + msg); }
-function error(msg) { console.error('*** ' + msg); }
-function notice(msg) { commander.verbose && console.log('--- ' + msg); }
+function start (msg) { quiet || console.log('--> ' + msg) }
+function end (msg) { quiet || console.log('<-- ' + msg) }
+function error (msg) { console.error('*** ' + msg) }
+function notice (msg) { commander.verbose && console.log('--- ' + msg) }
