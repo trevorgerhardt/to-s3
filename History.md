@@ -1,4 +1,13 @@
 
+## 0.2.1 — 2015-03-11
+
+* Add `--force` flag
+
+## 0.2.0 — 2015-02-25
+
+* Use Standard style
+* Adopt AWS standard for credential retrieval 
+
 ## 0.1.3 — 2015-02-24
 
 * Add `--region` flag
