@@ -19,6 +19,7 @@ commander
   .option('-p, --prefix <prefix>', 'Prefix files with path in bucket', '')
   .option('-a, --acl <acl>', 'The canned ACL to apply to the object. Possible values include: private | public-read | public-read-write | authenticated-read | bucket-owner-read | bucket-owner-full-control', 'private')
   .option('-i, --ignore <ignore>', 'Ignore files and folders that match the given string(s)', '^\\.')
+  .option('-f, --force', 'Force update all files.')
   .option('-q, --quiet', 'Quiet logs.')
   .option('-v, --verbose', 'Show notices')
   .parse(process.argv)
@@ -32,6 +33,7 @@ var cwd = process.cwd()
 var files = commander.args.slice(0, -1)
 var ignores = commander.ignore.split(',').map(function (i) { return new RegExp(i) })
 var prefix = commander.prefix
+var force = commander.force
 var quiet = commander.quiet
 var s3 = new AWS.S3({
   region: commander.region,
@@ -104,7 +106,7 @@ function pushFile (file, stats, done) {
   start('uploading ' + filename + ' to ' + bucket + '/' + key)
   isFileUpToDate(stats, key, function (err, upToDate) {
     if (err) notice('Error checking if file is up to date: ' + err)
-    if (upToDate) {
+    if (upToDate && !force) {
       end(bucket + '/' + key + ' contains the latest version of ' + filename)
       done()
     } else {
